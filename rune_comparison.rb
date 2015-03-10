@@ -34,5 +34,6 @@ end.reduce(&:merge)
 games_scraper = SuccessfulGamesScraper.new
 pro_runes = games_scraper.rune_ids(champion_name)
 
+puts "For #{champion_name}"
 puts "pro runes, #{pro_runes}"
 puts "your runes, #{runes}"
