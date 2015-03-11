@@ -1,8 +1,9 @@
 source 'http://rubygems.org'
 
-ruby "2.1.1"
-
 gem 'sinatra'
 gem 'rest-client'
 gem 'json'
 gem 'pry'
+gem 'dotenv', :groups => [:development, :test]
+gem 'rspec', :groups => :test
+gem 'webmock', :groups => :test

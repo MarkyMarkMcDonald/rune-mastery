@@ -2,6 +2,10 @@ require 'rest_client'
 require 'json'
 require 'pry'
 require_relative './successful_games_scraper.rb'
+require_relative './rune_comparator.rb'
+require 'dotenv'
+Dotenv.load
+require_relative './rune_lookup.rb'
 
 api_key = ENV['LOL_API_KEY']
 region = 'na'
@@ -24,8 +28,7 @@ champion_info_response = RestClient.get(champion_info_endpoint)
 
 champion_name = JSON.parse(champion_info_response)['name']
 
-masteries = match_history["matches"][0]["participants"][0]["masteries"]
-runes = match_history["matches"][0]["participants"][0]["runes"].map do |rune|
+player_runes = match_history["matches"][0]["participants"][0]["runes"].map do |rune|
   {
     rune['runeId'].to_s => rune['rank']
   }
@@ -34,6 +37,17 @@ end.reduce(&:merge)
 games_scraper = SuccessfulGamesScraper.new
 pro_runes = games_scraper.rune_ids(champion_name)
 
+
 puts "For #{champion_name}"
 puts "pro runes, #{pro_runes}"
-puts "your runes, #{runes}"
+puts "your runes, #{player_runes}"
+
+comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map() do |rune_id|
+  RuneLookup.colloq(rune_id.to_i)
+end
+puts "Same rune choices: #{comparison}"
+
+contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
+  {RuneLookup.colloq(key.to_i) => value}
+end
+puts "Differing rune choices: #{contrast}"
