@@ -42,7 +42,7 @@ puts "For #{champion_name}"
 puts "pro runes, #{pro_runes}"
 puts "your runes, #{player_runes}"
 
-comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map() do |rune_id|
+comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
   RuneLookup.colloq(rune_id.to_i)
 end
 puts "Same rune choices: #{comparison}"
