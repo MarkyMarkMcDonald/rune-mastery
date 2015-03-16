@@ -1,5 +1,6 @@
 require 'rest_client'
 require 'nokogiri'
+require 'uri'
 
 class SuccessfulGamesScraper
 
@@ -21,7 +22,7 @@ class SuccessfulGamesScraper
   private
 
   def best_game(champion_name)
-    response = RestClient.get("http://www.probuilds.net/champions/#{champion_name}")
+    response = RestClient.get("http://www.probuilds.net/champions/#{URI.escape(champion_name)}")
     doc = Nokogiri::HTML(response)
 
     best_players = doc.css('.champion-search-results .best-players a')
