@@ -14,28 +14,37 @@ Dotenv.load
 
 matches = MatchHistoryFetcher.new.fetch('jgreubz')
 
-champion_id = matches.first['participants'].first['championId']
-champion = ChampionFetcher.new.fetch(champion_id)
+matches.each_with_index do |match, index|
+  puts '#'*80
+  puts "Determining how your runes differed from the pros for match ##{index + 1}"
 
-player_runes = matches.first['participants'].first['runes'].map do |rune|
-  {
-    rune['runeId'].to_s => rune['rank']
-  }
-end.reduce(&:merge)
+  champion_id = match['participants'].first['championId']
+  champion = ChampionFetcher.new.fetch(champion_id)
 
-games_scraper = SuccessfulGamesScraper.new
-pro_runes = games_scraper.rune_ids(champion['name'])
+  puts "You played #{champion['name']}."
 
-puts "For #{champion['name']}"
-puts "pro runes, #{pro_runes}"
-puts "your runes, #{player_runes}"
+  player_runes = matches.first['participants'].first['runes'].map do |rune|
+    {
+      rune['runeId'].to_s => rune['rank']
+    }
+  end.reduce(&:merge)
 
-comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
-  RuneLookup.colloq(rune_id.to_i)
+  games_scraper = SuccessfulGamesScraper.new
+  pro_runes = games_scraper.rune_ids(champion['name'])
+
+  comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
+    RuneLookup.colloq(rune_id.to_i)
+  end
+  contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
+    {RuneLookup.colloq(key.to_i) => value}
+  end
+
+  puts 'Your rune selection'
+  puts player_runes
+  puts 'Same rune choices'
+  puts comparison
+  puts 'Differing rune choices'
+  puts contrast
+  puts '#'*80
 end
-puts "Same rune choices: #{comparison}"
 
-contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
-  {RuneLookup.colloq(key.to_i) => value}
-end
-puts "Differing rune choices: #{contrast}"

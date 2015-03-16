@@ -6,7 +6,7 @@ bundle install
 ruby rune_comparison.rb
 ```
 
-- [ ] Display information for last 10 matches instead of just latest
+- [X] Display information for last 10 matches instead of just latest
 - [ ] Compare with top 5 pros instead of just top
 - [ ] Don't include pros with missing runes (outdated)
 - [ ] Include count of runes shared in RuneComparator#compare (instead of just which ones)
