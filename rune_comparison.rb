@@ -16,9 +16,9 @@ summoner_name = ARGV[0] || 'marksalulz'
 
 matches = MatchHistoryFetcher.new.fetch(summoner_name)
 
-matches.each_with_index do |match, index|
+matches.each_with_index do |match, match_index|
   puts '#'*80
-  puts "Match ##{index + 1}"
+  puts "Match ##{match_index + 1}"
 
   champion_id = match['participants'].first['championId']
   champion = ChampionFetcher.new.fetch(champion_id)
@@ -32,23 +32,35 @@ matches.each_with_index do |match, index|
     }
   end.reduce(&:merge)
 
-  puts "Fetching a pro's rune selection..."
-  games_scraper = SuccessfulGamesScraper.new
-  pro_runes = games_scraper.rune_ids(champion['name'])
+  puts "Fetching multiple pro's rune selection..."
+  pro_games = SuccessfulGamesScraper.new.games(champion['name'])
 
-  comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
-    RuneLookup.colloq(rune_id.to_i)
-  end
-  contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
-    {RuneLookup.colloq(key.to_i) => value}
+  summaries = pro_games.map do |pro_game|
+    pro_runes = pro_game[:runes]
+    comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
+      RuneLookup.colloq(rune_id.to_i)
+    end
+    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
+      {RuneLookup.colloq(key.to_i) => value}
+    end
+
+    {
+      comparison: comparison,
+      contrast: contrast
+    }
   end
 
   puts 'Your rune selection'
   puts player_runes
-  puts 'Same rune choices'
-  puts comparison
-  puts 'Differing rune choices'
-  puts contrast
-  puts '#'*80
+
+  summaries.each_with_index do |summary, summary_index|
+    puts '-'*80
+    puts "Pro ##{summary_index}"
+
+    puts 'Same rune choices'
+    puts summary[:comparison]
+    puts 'Differing rune choices'
+    puts summary[:contrast]
+  end
 end
 

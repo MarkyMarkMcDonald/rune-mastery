@@ -4,8 +4,18 @@ require 'uri'
 
 class SuccessfulGamesScraper
 
-  def rune_ids(champion_name)
-    rune_elements = best_game(champion_name).css('.guide-runes .rune-page img')
+  def games(champion_name)
+    links = best_game_links(champion_name)
+    links.map do |link|
+      game_info = Nokogiri::HTML(RestClient.get(link))
+
+      {runes: rune_ids(game_info)}
+    end
+  end
+
+  private
+  def rune_ids(game_info)
+    rune_elements = game_info.css('.guide-runes .rune-page img')
 
     rune_elements.map do |rune_element|
       rune_element.attribute('data-tooltip').value.match(/(\d+)/).captures.first
@@ -19,19 +29,13 @@ class SuccessfulGamesScraper
     end
   end
 
-  private
-
-  def best_game(champion_name)
-    response = RestClient.get("http://www.probuilds.net/champions/#{URI.escape(champion_name)}")
-    doc = Nokogiri::HTML(response)
+  def best_game_links(champion_name)
+    doc = Nokogiri::HTML(RestClient.get("http://www.probuilds.net/champions/#{URI.escape(champion_name)}"))
 
     best_players = doc.css('.champion-search-results .best-players a')
-
-    best_game_link = best_players[0].attribute('href').value
-
-    best_game_response = RestClient.get(best_game_link)
-
-    Nokogiri::HTML(best_game_response)
+    best_players.map do |player|
+      player.attribute('href').value
+    end
   end
 
 end
