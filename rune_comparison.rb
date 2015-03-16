@@ -18,19 +18,21 @@ matches = MatchHistoryFetcher.new.fetch(summoner_name)
 
 matches.each_with_index do |match, index|
   puts '#'*80
-  puts "Determining how your runes differed from the pros for match ##{index + 1}"
+  puts "Match ##{index + 1}"
 
   champion_id = match['participants'].first['championId']
   champion = ChampionFetcher.new.fetch(champion_id)
 
   puts "You played #{champion['name']}."
 
+  puts "Fetching your rune selection..."
   player_runes = matches.first['participants'].first['runes'].map do |rune|
     {
       rune['runeId'].to_s => rune['rank']
     }
   end.reduce(&:merge)
 
+  puts "Fetching a pro's rune selection..."
   games_scraper = SuccessfulGamesScraper.new
   pro_runes = games_scraper.rune_ids(champion['name'])
 
