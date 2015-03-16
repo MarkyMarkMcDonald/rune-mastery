@@ -12,7 +12,9 @@ require_relative 'lib/rune_lookup.rb'
 
 Dotenv.load
 
-matches = MatchHistoryFetcher.new.fetch('jgreubz')
+summoner_name = ARGV[0] || 'marksalulz'
+
+matches = MatchHistoryFetcher.new.fetch(summoner_name)
 
 matches.each_with_index do |match, index|
   puts '#'*80
