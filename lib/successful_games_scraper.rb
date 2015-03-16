@@ -9,7 +9,11 @@ class SuccessfulGamesScraper
     links.map do |link|
       game_info = Nokogiri::HTML(RestClient.get(link))
 
-      {runes: rune_ids(game_info)}
+      runes = rune_ids(game_info)
+
+      break if runes.keys.empty?
+
+      {runes: runes}
     end
   end
 
