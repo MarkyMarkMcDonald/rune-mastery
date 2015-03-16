@@ -12,4 +12,4 @@ ruby rune_comparison.rb
 - [ ] Include count of runes shared in RuneComparator#compare (instead of just which ones)
 - [ ] Include 'type' of rune as first class field (Quint, Mark, Glyph, Seal)
 - [ ] Cache SuccessfulGamesScraper (By Champion)
-
+- [ ] Cache static api calls (Champion & Rune lookup)
