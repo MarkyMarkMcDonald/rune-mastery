@@ -1,3 +1,3 @@
 require 'webmock/rspec'
-require_relative '../rune_comparator'
-require_relative '../rune_lookup'
+require_relative '../lib/rune_comparator'
+require_relative '../lib/rune_lookup'

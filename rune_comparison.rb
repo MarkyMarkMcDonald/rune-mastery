@@ -1,14 +1,16 @@
 require 'rest_client'
 require 'json'
 require 'pry'
-require_relative './successful_games_scraper.rb'
-require_relative './rune_comparator.rb'
-require_relative './champion_fetcher.rb'
-require_relative './match_history_fetcher.rb'
-require_relative './lol_api_settings.rb'
 require 'dotenv'
+
+require_relative 'lib/successful_games_scraper.rb'
+require_relative 'lib/rune_comparator.rb'
+require_relative 'lib/champion_fetcher.rb'
+require_relative 'lib/match_history_fetcher.rb'
+require_relative 'lib/lol_api_settings.rb'
+require_relative 'lib/rune_lookup.rb'
+
 Dotenv.load
-require_relative './rune_lookup.rb'
 
 matches = MatchHistoryFetcher.new.fetch('jgreubz')
 
