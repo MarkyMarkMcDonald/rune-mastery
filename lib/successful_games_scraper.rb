@@ -9,16 +9,20 @@ class SuccessfulGamesScraper
     links.map do |link|
       game_info = Nokogiri::HTML(RestClient.get(link))
 
-      runes = rune_ids(game_info)
-
+      runes = runes_from_document(game_info)
       break if runes.keys.empty?
 
-      {runes: runes}
+      player_name = game_info.css('a.block .gold')[1].text
+
+      {
+        runes: runes,
+        player_name: player_name
+      }
     end
   end
 
   private
-  def rune_ids(game_info)
+  def runes_from_document(game_info)
     rune_elements = game_info.css('.guide-runes .rune-page img')
 
     rune_elements.map do |rune_element|

@@ -45,6 +45,7 @@ matches.each_with_index do |match, match_index|
     end
 
     {
+      player_name: pro_game[:player_name],
       comparison: comparison,
       contrast: contrast
     }
@@ -55,7 +56,7 @@ matches.each_with_index do |match, match_index|
 
   summaries.each_with_index do |summary, summary_index|
     puts '-'*80
-    puts "Pro ##{summary_index}"
+    puts "Pro ##{summary_index + 1} - #{summary[:player_name]}"
 
     puts 'Same rune choices'
     puts summary[:comparison]
