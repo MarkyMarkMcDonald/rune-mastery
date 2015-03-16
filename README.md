@@ -5,3 +5,11 @@ Comparing runes and masteries of your recent games vs pros
 bundle install
 ruby rune_comparison.rb
 ```
+
+- [ ] Display information for last 10 matches instead of just latest
+- [ ] Compare with top 5 pros instead of just top
+- [ ] Don't include pros with missing runes (outdated)
+- [ ] Include count of runes shared in RuneComparator#compare (instead of just which ones)
+- [ ] Include 'type' of rune as first class field (Quint, Mark, Glyph, Seal)
+- [ ] Cache SuccessfulGamesScraper (By Champion)
+
