@@ -32,6 +32,11 @@ matches.each_with_index do |match, match_index|
     }
   end.reduce(&:merge)
 
+  puts 'Your rune selection'
+   player_runes.each do |rune_id, count|
+    puts "#{RuneLookup.colloq(rune_id.to_i)}: #{count}"
+  end
+
   puts "Fetching multiple pro's rune selection..."
   pro_games = SuccessfulGamesScraper.new.games(champion['name'])
 
@@ -40,8 +45,8 @@ matches.each_with_index do |match, match_index|
     comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
       RuneLookup.colloq(rune_id.to_i)
     end
-    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |key, value|
-      {RuneLookup.colloq(key.to_i) => value}
+    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id, count|
+      {RuneLookup.colloq(rune_id.to_i) => count}
     end
 
     {
@@ -50,9 +55,6 @@ matches.each_with_index do |match, match_index|
       contrast: contrast
     }
   end
-
-  puts 'Your rune selection'
-  puts player_runes
 
   summaries.each_with_index do |summary, summary_index|
     puts '-'*80
