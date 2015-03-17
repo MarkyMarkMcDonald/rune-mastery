@@ -1,3 +1,9 @@
+require_relative 'successful_games_scraper.rb'
+require_relative 'rune_comparator.rb'
+require_relative 'champion_fetcher.rb'
+require_relative 'lol_api_settings.rb'
+require_relative 'rune_lookup.rb'
+
 class MatchSummarizer
   def summarize(match)
     champion_id = match['participants'].first['championId']

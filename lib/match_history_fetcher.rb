@@ -1,3 +1,5 @@
+require 'rest_client'
+require 'json'
 require 'uri'
 
 class MatchHistoryFetcher
