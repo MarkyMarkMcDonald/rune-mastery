@@ -10,7 +10,7 @@ class SuccessfulGamesScraper
       game_info = Nokogiri::HTML(RestClient.get(link))
 
       runes = runes_from_document(game_info)
-      break if runes.keys.empty?
+      next if runes.keys.empty?
 
       player_name = game_info.css('a.block .gold')[1].text
 
@@ -18,7 +18,7 @@ class SuccessfulGamesScraper
         runes: runes,
         player_name: player_name
       }
-    end
+    end.compact
   end
 
   private
