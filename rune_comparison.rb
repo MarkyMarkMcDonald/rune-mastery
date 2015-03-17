@@ -3,6 +3,7 @@ require 'json'
 require 'pry'
 require 'dotenv'
 
+require_relative 'lib/match_summarizer.rb'
 require_relative 'lib/successful_games_scraper.rb'
 require_relative 'lib/rune_comparator.rb'
 require_relative 'lib/champion_fetcher.rb'
@@ -20,51 +21,5 @@ matches.each_with_index do |match, match_index|
   puts '#'*80
   puts "Match ##{match_index + 1}"
 
-  champion_id = match['participants'].first['championId']
-  champion = ChampionFetcher.new.fetch(champion_id)
-
-  puts "You played #{champion['name']}."
-
-  puts "Fetching your rune selection..."
-  player_runes = matches.first['participants'].first['runes'].map do |rune|
-    {
-      rune['runeId'].to_s => rune['rank']
-    }
-  end.reduce(&:merge)
-
-  puts 'Your rune selection'
-   player_runes.each do |rune_id, count|
-    puts "#{RuneLookup.by_id(rune_id).name}: #{count}"
-  end
-
-  puts "Fetching multiple pro's rune selection..."
-  pro_games = SuccessfulGamesScraper.new.games(champion['name'])
-
-  summaries = pro_games.map do |pro_game|
-    pro_runes = pro_game[:rune_id_counts]
-
-    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id, difference|
-      {
-        rune_id: {
-          rune: RuneLookup.by_id(rune_id),
-          difference: difference
-        }
-      }
-    end
-
-    {
-      player_runes: player_runes,
-      player_name: pro_game[:player_name],
-      contrast: contrast
-    }
-  end
-
-  summaries.map.with_index do |summary, summary_index|
-    puts '-'*80
-    puts "Pro ##{summary_index + 1} - #{summary[:player_name]}"
-
-    puts 'Differing rune choices'
-    puts summary[:contrast]
-  end
+  MatchSummarizer.new.summarize(match)
 end
-
