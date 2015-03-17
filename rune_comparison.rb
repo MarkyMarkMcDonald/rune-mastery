@@ -34,34 +34,35 @@ matches.each_with_index do |match, match_index|
 
   puts 'Your rune selection'
    player_runes.each do |rune_id, count|
-    puts "#{RuneLookup.colloq(rune_id.to_i)}: #{count}"
+    puts "#{RuneLookup.by_id(rune_id).name}: #{count}"
   end
 
   puts "Fetching multiple pro's rune selection..."
   pro_games = SuccessfulGamesScraper.new.games(champion['name'])
 
   summaries = pro_games.map do |pro_game|
-    pro_runes = pro_game[:runes]
-    comparison = RuneComparator.compare(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id|
-      RuneLookup.colloq(rune_id.to_i)
-    end
-    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id, count|
-      {RuneLookup.colloq(rune_id.to_i) => count}
+    pro_runes = pro_game[:rune_id_counts]
+
+    contrast = RuneComparator.contrast(pro_runes: pro_runes, player_runes: player_runes).map do |rune_id, difference|
+      {
+        rune_id: {
+          rune: RuneLookup.by_id(rune_id),
+          difference: difference
+        }
+      }
     end
 
     {
+      player_runes: player_runes,
       player_name: pro_game[:player_name],
-      comparison: comparison,
       contrast: contrast
     }
   end
 
-  summaries.each_with_index do |summary, summary_index|
+  summaries.map.with_index do |summary, summary_index|
     puts '-'*80
     puts "Pro ##{summary_index + 1} - #{summary[:player_name]}"
 
-    puts 'Same rune choices'
-    puts summary[:comparison]
     puts 'Differing rune choices'
     puts summary[:contrast]
   end

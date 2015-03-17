@@ -15,7 +15,7 @@ class SuccessfulGamesScraper
       player_name = game_info.css('a.block .gold')[1].text
 
       {
-        runes: runes,
+        rune_id_counts: runes,
         player_name: player_name
       }
     end.compact
